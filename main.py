@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request
+from werkzeug.middleware.proxy_fix import ProxyFix
 import random
 import json
 import sqlite3
@@ -6,6 +7,14 @@ import datetime
 from contextlib import closing
 
 app = Flask(__name__)
+
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_for=1,
+    x_proto=1,
+    x_host=1,
+    x_port=1
+)
 
 # Database file
 DATABASE = 'quiz_data.db'
