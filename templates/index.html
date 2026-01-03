@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Spelling Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .header h1 img.emoji {
+            width: 32px;
+            height: 32px;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .table th {
+            background-color: #667eea;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+        .level-header {
+            background-color: #f8f9fa;
+        }
+        .level-title {
+            background-color: #e9ecef !important;
+            padding: 15px !important;
+            font-size: 16px;
+            color: #495057;
+            text-align: center !important;
+            border: 2px solid #667eea;
+        }
+        .level1-input {
+            font-size: 16px;
+            padding: 10px;
+        }
+        .table th img.emoji {
+            width: 24px;
+            height: 24px;
+            margin: 0;
+            vertical-align: middle;
+        }
+        .table td {
+            position: relative;
+        }
+        .table td input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        .table td input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .table td input.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .table td input.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        .table td input:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .answer-display {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .struck-out {
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 8px;
+        }
+        .correct-answer-text {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .table td {
+            vertical-align: top;
+        }
+        .table td::before {
+            content: attr(data-country-label);
+            display: none;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+        
+        /* Mobile responsive layout */
+        @media (max-width: 768px) {
+            .table thead {
+                display: none;
+            }
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
+            .table tbody {
+                display: block;
+            }
+            .table tr {
+                border: 2px solid #667eea;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                padding: 15px;
+                background-color: #f8f9fa !important;
+            }
+            .table tr.level-header {
+                background-color: #e9ecef !important;
+                border: 2px solid #667eea;
+            }
+            .table td {
+                border: none;
+                padding: 10px 0;
+                text-align: left;
+                background-color: transparent !important;
+            }
+            .table td.level-title {
+                text-align: center !important;
+                font-weight: 600;
+                padding: 15px !important;
+            }
+            .table td:first-child {
+                font-size: 18px;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #dee2e6;
+            }
+            .table td::before {
+                display: block;
+                font-size: 16px;
+            }
+            .table td input {
+                margin-top: 5px;
+            }
+            .answer-display {
+                margin-top: 8px;
+            }
+            .table-hover tbody tr:hover {
+                background-color: #f8f9fa !important;
+            }
+            .table-hover tbody tr.level-header:hover {
+                background-color: #e9ecef !important;
+            }
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .score-display {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        .score-display.show {
+            display: block;
+        }
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .incorrect-answer {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        .correct-answer-display {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        .statistics {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .statistics h4 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 18px;
+        }
+        .stat-item {
+            margin: 8px 0;
+            font-size: 16px;
+            color: #495057;
+        }
+        .stat-item strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <h1>🇺🇸 → 🌍 Spelling Quiz</h1>
+            <p class="lead">Test your knowledge of English spellings in different countries</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>🇺🇸</th>
+                        <th>🇨🇦</th>
+                        <th>🇬🇧</th>
+                        <th>🇦🇺</th>
+                        <th>🇳🇿</th>
+                    </tr>
+                </thead>
+                <tbody id="quizTable">
+                    <tr>
+                        <td colspan="5" class="loading">Loading quiz...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary btn-submit" id="submitButton" onclick="checkAnswers()">Submit Answers</button>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">
+            <h3>Your Score</h3>
+            <div class="score-number" id="scoreNumber">0</div>
+            <p id="scoreText"></p>
+            <div class="statistics" id="statistics" style="display: none;">
+                <h4>Statistics</h4>
+                <div class="stat-item" id="totalAttempts"></div>
+                <div class="stat-item" id="averageScore"></div>
+                <div class="stat-item" id="perfectScores" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let quizData = [];
+        let levelDescriptions = {};
+
+        // Fetch quiz data from Python backend
+        async function loadQuiz() {
+            try {
+                const response = await fetch('/api/quiz');
+                const data = await response.json();
+                quizData = data.quizData;
+                levelDescriptions = data.levelDescriptions;
+                generateQuiz();
+            } catch (error) {
+                console.error('Error loading quiz:', error);
+                document.getElementById('quizTable').innerHTML = 
+                    '<tr><td colspan="5" class="loading">Error loading quiz. Please refresh the page.</td></tr>';
+            }
+        }
+
+        // Generate quiz table
+        function generateQuiz() {
+            const tableBody = document.getElementById('quizTable');
+            tableBody.innerHTML = '';
+
+            let currentLevel = 0;
+            let wordIndex = 0;
+
+            quizData.forEach((word) => {
+                const wordLevel = word.level;
+
+                // Add level header if level changed
+                if (wordLevel !== currentLevel) {
+                    currentLevel = wordLevel;
+                    const levelRow = document.createElement('tr');
+                    levelRow.className = 'level-header';
+                    levelRow.innerHTML = `
+                        <td colspan="5" class="level-title">
+                            <strong>Level ${wordLevel}</strong>: ${levelDescriptions[wordLevel]}
+                        </td>
+                    `;
+                    tableBody.appendChild(levelRow);
+                }
+
+                // Add word row
+                const row = document.createElement('tr');
+                
+                // For Level 1, use a single input field spanning all 4 countries
+                if (wordLevel === 1) {
+                    row.innerHTML = `
+                        <td>
+                            <strong>${word.us}</strong>
+                            ${word.note ? `<br><small class="text-muted">(${word.note})</small>` : ''}
+                        </td>
+                        <td colspan="4" data-country-label="🇨🇦 🇬🇧 🇦🇺 🇳🇿">
+                            <input type="text" class="form-control level1-input" data-word="${wordIndex}" data-level="1" placeholder="Enter spelling">
+                        </td>
+                    `;
+                } else {
+                    // For other levels, use separate fields for each country
+                    row.innerHTML = `
+                        <td>
+                            <strong>${word.us}</strong>
+                            ${word.note ? `<br><small class="text-muted">(${word.note})</small>` : ''}
+                        </td>
+                        <td data-country-label="🇨🇦"><input type="text" class="form-control" data-word="${wordIndex}" data-country="ca" placeholder="Enter spelling"></td>
+                        <td data-country-label="🇬🇧"><input type="text" class="form-control" data-word="${wordIndex}" data-country="gb" placeholder="Enter spelling"></td>
+                        <td data-country-label="🇦🇺"><input type="text" class="form-control" data-word="${wordIndex}" data-country="au" placeholder="Enter spelling"></td>
+                        <td data-country-label="🇳🇿"><input type="text" class="form-control" data-word="${wordIndex}" data-country="nz" placeholder="Enter spelling"></td>
+                    `;
+                }
+                
+                tableBody.appendChild(row);
+                wordIndex++;
+            });
+        }
+
+        // Check answers by sending to Python backend
+        async function checkAnswers() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            const answers = [];
+
+            inputs.forEach(input => {
+                const wordIndex = parseInt(input.getAttribute('data-word'));
+                const isLevel1 = input.getAttribute('data-level') === '1';
+                const country = input.getAttribute('data-country');
+                const userAnswer = input.value.trim();
+
+                answers.push({
+                    wordIndex: wordIndex,
+                    isLevel1: isLevel1,
+                    country: country || null,
+                    answer: userAnswer
+                });
+            });
+
+            // Disable submit button while checking
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Checking...';
+
+            try {
+                const response = await fetch('/api/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        quizData: quizData,
+                        answers: answers
+                    })
+                });
+
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                console.error('Error checking answers:', error);
+                alert('Error checking answers. Please try again.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Answers';
+            }
+        }
+
+        // Display results from backend
+        function displayResults(result) {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            const results = result.results;
+
+            results.forEach((resultItem, index) => {
+                const input = inputs[index];
+                if (!input) return;
+
+                input.classList.remove('correct', 'incorrect');
+                input.disabled = true;
+
+                if (resultItem.correct) {
+                    input.classList.add('correct');
+                } else {
+                    input.classList.add('incorrect');
+                    
+                    // Create a display element showing struck-out user answer and correct answer
+                    const answerDisplay = document.createElement('span');
+                    answerDisplay.className = 'answer-display';
+                    
+                    const struckOut = document.createElement('span');
+                    struckOut.className = 'struck-out';
+                    struckOut.textContent = resultItem.userAnswer || '(empty)';
+                    
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = 'correct-answer-text';
+                    correctSpan.textContent = resultItem.correctAnswer;
+                    
+                    answerDisplay.appendChild(struckOut);
+                    answerDisplay.appendChild(correctSpan);
+                    
+                    // Insert the answer display after the input
+                    input.parentNode.insertBefore(answerDisplay, input.nextSibling);
+                }
+            });
+
+            // Update submit button
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitted';
+
+            // Display score
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreNumber = document.getElementById('scoreNumber');
+            const scoreText = document.getElementById('scoreText');
+
+            const score = result.score;
+            scoreNumber.textContent = `${score.correct} / ${score.total}`;
+            
+            let message = `You got ${score.correct} out of ${score.total} answers correct (${score.percentage}%)!`;
+            if (score.percentage === 100) {
+                message += " 🎉 Perfect score!";
+            } else if (score.percentage >= 80) {
+                message += " 👏 Great job!";
+            } else if (score.percentage >= 60) {
+                message += " 👍 Good effort!";
+            } else {
+                message += " 🤦 Lock in bruh";
+            }
+
+            scoreText.textContent = message;
+            scoreDisplay.classList.add('show');
+
+            // Display statistics
+            if (result.statistics) {
+                const stats = result.statistics;
+                const statsDiv = document.getElementById('statistics');
+                const totalAttemptsEl = document.getElementById('totalAttempts');
+                const averageScoreEl = document.getElementById('averageScore');
+                const perfectScoresEl = document.getElementById('perfectScores');
+
+                totalAttemptsEl.textContent = `You are the ${stats.total_attempts}th person to take this quiz.`;
+                averageScoreEl.textContent = `Average score: ${stats.average_score}%`;
+
+                // Show perfect scores if user got a perfect score
+                if (score.percentage === 100) {
+                    perfectScoresEl.textContent = `You are the ${stats.perfect_scores}th person to achieve a perfect score!`;
+                    perfectScoresEl.style.display = 'block';
+                } else {
+                    perfectScoresEl.style.display = 'none';
+                }
+
+                statsDiv.style.display = 'block';
+            }
+
+            // Scroll to score
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Initialize quiz on page load
+        loadQuiz();
+        
+        // Initialize Twemoji to render flag emojis
+        if (typeof twemoji !== 'undefined') {
+            twemoji.parse(document.body, {
+                folder: 'svg',
+                ext: '.svg'
+            });
+        }
+    </script>
+</body>
+</html>
+
